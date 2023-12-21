@@ -17,10 +17,15 @@ By default they will be in a folder named `out`.
 There are a few, play with them if desired, I can't promise the outcome will be desired.
 
 `--tilesize 44`  <- Tile size.  
-`--offset 1`  <- 0 if tile size is an odd number, 1 if it is an even number. Other numbers have unknown results.
-`--output out`  <- Where to save sliced images to.
-`--filename {0}` <- {0} is the image number, you can use tile{0} or file{0} for example.
-`--startingnumber 0` <- The file number to start with.
+`--offset 1`  <- 0 if tile size is an odd number, 1 if it is an even number. Other numbers have unknown results.  
+`--output out`  <- Where to save sliced images to.  
+`--filename {0}` <- {0} is the image number, you can use tile{0} or file{0} for example.  
+`--startingnumber 0` <- The file number to start with.  
 
 # Screenshots!! I won't use it without screenshots.
 
+![image](https://github.com/bittiez/UO-Iso-Tile-Slicer/assets/3859393/a2c1c3ca-bf57-4bb4-877a-6baf4d232175)
+
+Into
+
+![image](https://github.com/bittiez/UO-Iso-Tile-Slicer/assets/3859393/010f16a4-098c-4750-b653-40dfe5090b88)
