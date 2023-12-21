@@ -57,7 +57,7 @@ namespace IsoTiloSlicer
         {
             int xOffset = -(TileWidth / 2), yOffset = -(TileHeight / 2);
 
-            for (int row = 0; row < ySlices * 2; row++)
+            for (int row = 0; row < ySlices; row++)
             {
                 for (int col = 0; col < xSlices; col++)
                 {
@@ -137,13 +137,14 @@ namespace IsoTiloSlicer
         public void CreateHtmlLayout()
         {
             StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"<body bgcolor='{BackgroundColor.ToHtmlCssColorCode()}'>");
             int startingNumber = StartingFileNumber;
 
             string[][] tables = new string[ySlices][];
 
             for (int i = 0; i < tables.Length; i++)
             {
-                tables[i] = new string[xSlices * 2];
+                tables[i] = new string[xSlices];
             }
 
 
@@ -155,7 +156,7 @@ namespace IsoTiloSlicer
                 tables[r][c] = $"<img src='{fname}' title='{fname}'>";
                 c++;
 
-                if (c >= xSlices * 2)
+                if (c >= xSlices)
                 {
                     c = 0;
                     r++;
@@ -163,22 +164,25 @@ namespace IsoTiloSlicer
                 startingNumber++;
             }
 
-            sb.AppendLine("<table>");
-
-
             for (int i = 0; i < tables.Length; i++) //Rows
             {
-                sb.AppendLine(" <tr>");
+                string pad = string.Empty;
+                if(i % 2 != 0)
+                {
+                    pad = $"margin-left: {TileWidth/2}";
+                }
+
+                sb.AppendLine($"<table style='margin: 0; padding: 0; border: 0; border-spacing: 0; {pad}'><tr>");
+
                 for (int ic = 0; ic < tables[i].Length; ic++) //Column
                 {
                     sb.AppendLine($"    <td width='{TileWidth}' height='{TileHeight}'>{tables[i][ic]}</td>");
                     //sb.Append($"<td width='{TileWidth}' height='{TileHeight}'></td>");
                 }
-                sb.AppendLine(" </tr>");
+                sb.AppendLine("</tr></table>");
                 //sb.Append($"<tr height='{TileHeight}'></tr>");
             }
-
-            sb.AppendLine("</table>");
+            sb.AppendLine("</body>");
 
             try
             {
