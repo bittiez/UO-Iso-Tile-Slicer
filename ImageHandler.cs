@@ -1,7 +1,7 @@
 ﻿using IronSoftware.Drawing;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Color = IronSoftware.Drawing.Color;
+using Point = IronSoftware.Drawing.Point;
 
 namespace IsoTiloSlicer
 {
@@ -119,6 +119,52 @@ namespace IsoTiloSlicer
             return new IronSoftware.Drawing.Point(x, y);
         }
 
+        private AnyBitmap GenSampleGrid()
+        {
+            AnyBitmap grid = new AnyBitmap(TileWidth, TileHeight);
+
+            Color gColor = new Color(100, 0, 255, 0);
+
+            int x = 0, y = grid.Height / 2;
+
+            while (x < grid.Width && y < grid.Height)
+            {
+                grid.SetPixel(x, y, gColor);
+                x++;
+                y++;
+            }
+
+            x = grid.Width / 2;
+            y = 0;
+            while (x < grid.Width && y < grid.Height)
+            {
+                grid.SetPixel(x, y, gColor);
+                x++;
+                y++;
+            }
+
+            x = grid.Width / 2;
+            y = 0;
+
+            while (x > 0 && y < grid.Height)
+            {
+                grid.SetPixel(x, y, gColor);
+                x--;
+                y++;
+            }
+
+            x = grid.Width - 1;
+            y = grid.Height / 2;
+            while (x > 0 && y < grid.Height)
+            {
+                grid.SetPixel(x, y, gColor);
+                x--;
+                y++;
+            }
+
+            return grid;
+        }
+
         public void SaveImages()
         {
             int startingNumber = StartingFileNumber;
@@ -132,12 +178,14 @@ namespace IsoTiloSlicer
                 image.SaveAs(Path.Combine(OutputDirectory, string.Format(FileNameFormat + ".bmp", startingNumber)), AnyBitmap.ImageFormat.Bmp);
                 startingNumber++;
             }
+
+            GenSampleGrid().SaveAs(Path.Combine(OutputDirectory, "grid.png"), AnyBitmap.ImageFormat.Png);
         }
 
         public void CreateHtmlLayout()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"<body bgcolor='{BackgroundColor.ToHtmlCssColorCode()}'>\n");
+            sb.AppendLine($"<body bgcolor='{BackgroundColor.ToHtmlCssColorCode()}' style='padding: 0px; border: 0px; margin: 0px;'>\n");
 
             int startingNumber = StartingFileNumber;
 
@@ -157,7 +205,13 @@ namespace IsoTiloSlicer
                 int gx = c;
                 int gy = r;
 
-                tables[r][c] = $"<img src='{fname}' title='{fname} ({gx}, {gy})'>";
+                Point position = GetSectionStartPosition(gy, gx);
+
+                tables[r][c] = $"<img src='{fname}' title='{fname} ({gx}, {gy})' style='" +
+                    "position: absolute;" +
+                    $"top: {position.Y * 2 + TileHeight};" +
+                    $"left: {position.X * 2 + TileWidth}" +
+                    "'>";
                 c++;
 
                 if (c >= xSlices)
@@ -170,25 +224,14 @@ namespace IsoTiloSlicer
 
             for (int i = 0; i < tables.Length; i++) //Rows
             {
-                string pad = string.Empty;
-                if (i % 2 != 0)
-                {
-                    pad = $"margin-left: {TileWidth / 2}";
-                }
-
-                sb.AppendLine($"<table style='margin: 0; padding: 0; border: 0; border-spacing: 0; {pad}'><tr>");
-
                 for (int ic = 0; ic < tables[i].Length; ic++) //Column
                 {
-
-
-                    sb.AppendLine($"    " +
-                        $"<td width='{TileWidth}' height='{TileHeight}'  style='border: 1px solid green; margin-right: {TileWidth / 2}'>" +
-                        $"{tables[i][ic]}" +
-                        "</td>");
+                    sb.AppendLine(tables[i][ic]);
                 }
-                sb.AppendLine("</tr></table>");
             }
+
+            sb.AppendLine($"<div style=\"background-image: url('grid.png'); position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;\"></div>");
+
             sb.AppendLine("</body>");
 
             try
