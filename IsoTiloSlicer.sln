@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IsoTiloSlicer", "IsoTiloSlicer.csproj", "{CE91AF4B-1694-4C57-A1DF-D25DC183DA7F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE91AF4B-1694-4C57-A1DF-D25DC183DA7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE91AF4B-1694-4C57-A1DF-D25DC183DA7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE91AF4B-1694-4C57-A1DF-D25DC183DA7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE91AF4B-1694-4C57-A1DF-D25DC183DA7F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BBDFDF1E-08C0-4B8A-8E48-70AFBFE339F5}
+	EndGlobalSection
+EndGlobal
