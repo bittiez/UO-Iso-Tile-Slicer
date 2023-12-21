@@ -1,3 +1,5 @@
+# This is not functional yet
+
 # UO Isometric tile slicer
 That's a mouthful aint it?
 
