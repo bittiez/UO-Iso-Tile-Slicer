@@ -1,5 +1,3 @@
-# This is not functional yet
-
 # UO Isometric tile slicer
 That's a mouthful aint it?
 
@@ -13,7 +11,7 @@ This is a command line program to take an image and slice it up in isometric til
 
 3. Wait for it to complete. There will be a few useless empty tiles, this is normal and could be fixed if someone was really bothered about it.
 
-By default they will be in a folder named `out`.
+By default they will be in a folder named `out`. There is also a layout.html file to help visualize the layout.  
 
 ## Other options??
 There are a few, play with them if desired, I can't promise the outcome will be desired.
@@ -30,4 +28,5 @@ There are a few, play with them if desired, I can't promise the outcome will be 
 
 Into
 
-![image](https://github.com/bittiez/UO-Iso-Tile-Slicer/assets/3859393/010f16a4-098c-4750-b653-40dfe5090b88)
+![image](https://github.com/bittiez/UO-Iso-Tile-Slicer/assets/3859393/5eae588c-3b95-47cd-a7ac-b658c7993bb9)
+
