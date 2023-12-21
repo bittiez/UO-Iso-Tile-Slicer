@@ -57,17 +57,11 @@ namespace IsoTiloSlicer
         {
             int xOffset = -(TileWidth / 2), yOffset = -(TileHeight / 2);
 
-            bool rOffset = false;
-
-            int widthProgress = 0; 
-            int heightProgress = 0;
-
-            for (int row = 0; row < xSlices; row++)
+            for (int row = 0; row < ySlices * 2; row++)
             {
-                for (int col = 0; col < ySlices; col++)
+                for (int col = 0; col < xSlices; col++)
                 {
-                    int startX = (col * TileWidth) + xOffset;
-                    int startY = (row * TileHeight) + yOffset;
+                    var start = GetSectionStartPosition(row, col);
 
                     AnyBitmap slice = new AnyBitmap(TileWidth, TileHeight, BackgroundColor);
 
@@ -84,11 +78,11 @@ namespace IsoTiloSlicer
 
                         for (int i = 0; i < grabQty; i++)
                         {
-                            if (grabX + i + startX < 0 || grabX + i + startX >= OriginalImage.Width || yPixel + startY < 0 || yPixel + startY >= OriginalImage.Height)
+                            if (grabX + i + (int)start.X < 0 || grabX + i + (int)start.X >= OriginalImage.Width || yPixel + (int)start.Y < 0 || yPixel + (int)start.Y >= OriginalImage.Height)
                             {
                                 continue;
                             }
-                            slice.SetPixel(grabX + i, yPixel, OriginalImage.GetPixel(grabX + i + startX, yPixel + startY));
+                            slice.SetPixel(grabX + i, yPixel, OriginalImage.GetPixel(grabX + i + (int)start.X, yPixel + (int)start.Y));
                         }
 
                         if (!reverse)
@@ -109,20 +103,20 @@ namespace IsoTiloSlicer
                     Slices.Add(slice);
 
                 }
-
-                //if (!rOffset)
-                //{
-                //    xOffset = -(TileWidth / 2);
-                //    yOffset = -(TileHeight / 2);
-                //    rOffset = true;
-                //}
-                //else
-                //{
-                //    xOffset = (TileWidth / 2);
-                //    yOffset = (TileHeight / 2);
-                //    rOffset = false;
-                //}
             }
+        }
+
+        private IronSoftware.Drawing.Point GetSectionStartPosition(int row, int column)
+        {
+            int x = column * TileWidth;
+            int y = (row * TileHeight) - (TileHeight / 2);
+
+            if(row % 2 == 0) //Number is even
+            {
+                x -= (TileWidth / 2);
+            }
+
+            return new IronSoftware.Drawing.Point(x, y);
         }
 
         public void SaveImages()
@@ -147,9 +141,9 @@ namespace IsoTiloSlicer
 
             string[][] tables = new string[ySlices][];
 
-            for (int i = 0; i < ySlices; i++)
+            for (int i = 0; i < tables.Length; i++)
             {
-                tables[i] = new string[xSlices];
+                tables[i] = new string[xSlices * 2];
             }
 
 
@@ -161,7 +155,7 @@ namespace IsoTiloSlicer
                 tables[r][c] = $"<img src='{fname}' title='{fname}'>";
                 c++;
 
-                if (c >= xSlices)
+                if (c >= xSlices * 2)
                 {
                     c = 0;
                     r++;
@@ -169,22 +163,22 @@ namespace IsoTiloSlicer
                 startingNumber++;
             }
 
-            sb.Append("<table>");
+            sb.AppendLine("<table>");
 
 
             for (int i = 0; i < tables.Length; i++) //Rows
             {
-                sb.Append("<tr>");
+                sb.AppendLine(" <tr>");
                 for (int ic = 0; ic < tables[i].Length; ic++) //Column
                 {
-                    sb.Append($"<td width='{TileWidth}' height='{TileHeight}'>{tables[i][ic]}</td>");
+                    sb.AppendLine($"    <td width='{TileWidth}' height='{TileHeight}'>{tables[i][ic]}</td>");
                     //sb.Append($"<td width='{TileWidth}' height='{TileHeight}'></td>");
                 }
-                sb.Append("</tr>");
+                sb.AppendLine(" </tr>");
                 //sb.Append($"<tr height='{TileHeight}'></tr>");
             }
 
-            sb.Append("</table>");
+            sb.AppendLine("</table>");
 
             try
             {
