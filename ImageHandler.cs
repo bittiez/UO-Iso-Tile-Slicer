@@ -176,7 +176,7 @@ namespace IsoTiloSlicer
 
                 for (int ic = 0; ic < tables[i].Length; ic++) //Column
                 {
-                    sb.AppendLine($"    <td width='{TileWidth}' height='{TileHeight}'  style='margin-right: {TileWidth / 2}'>{tables[i][ic]}</td>");
+                    sb.AppendLine($"    <td width='{TileWidth}' height='{TileHeight}'  style='border: 1px solid green'>{tables[i][ic]}</td>");
                     //sb.Append($"<td width='{TileWidth}' height='{TileHeight}'></td>");
                 }
                 sb.AppendLine("</tr></table>");
