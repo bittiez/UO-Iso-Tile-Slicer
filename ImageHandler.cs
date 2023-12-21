@@ -109,9 +109,9 @@ namespace IsoTiloSlicer
         private IronSoftware.Drawing.Point GetSectionStartPosition(int row, int column)
         {
             int x = column * TileWidth;
-            int y = (row * (TileHeight/2)) - (TileHeight / 2);
+            int y = (row * (TileHeight / 2)) - (TileHeight / 2);
 
-            if(row % 2 == 0) //Number is even
+            if (row % 2 == 0) //Number is even
             {
                 x -= (TileWidth / 2);
             }
@@ -137,7 +137,8 @@ namespace IsoTiloSlicer
         public void CreateHtmlLayout()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"<body bgcolor='{BackgroundColor.ToHtmlCssColorCode()}'>");
+            sb.AppendLine($"<body bgcolor='{BackgroundColor.ToHtmlCssColorCode()}'>\n");
+
             int startingNumber = StartingFileNumber;
 
             string[][] tables = new string[ySlices][];
@@ -153,7 +154,10 @@ namespace IsoTiloSlicer
             {
                 string fname = string.Format(FileNameFormat + ".bmp", startingNumber);
 
-                tables[r][c] = $"<img src='{fname}' title='{fname}'>";
+                int gx = c;
+                int gy = r;
+
+                tables[r][c] = $"<img src='{fname}' title='{fname} ({gx}, {gy})'>";
                 c++;
 
                 if (c >= xSlices)
@@ -167,20 +171,23 @@ namespace IsoTiloSlicer
             for (int i = 0; i < tables.Length; i++) //Rows
             {
                 string pad = string.Empty;
-                if(i % 2 != 0)
+                if (i % 2 != 0)
                 {
-                    pad = $"margin-left: {TileWidth/2}";
+                    pad = $"margin-left: {TileWidth / 2}";
                 }
 
                 sb.AppendLine($"<table style='margin: 0; padding: 0; border: 0; border-spacing: 0; {pad}'><tr>");
 
                 for (int ic = 0; ic < tables[i].Length; ic++) //Column
                 {
-                    sb.AppendLine($"    <td width='{TileWidth}' height='{TileHeight}'  style='border: 1px solid green'>{tables[i][ic]}</td>");
-                    //sb.Append($"<td width='{TileWidth}' height='{TileHeight}'></td>");
+
+
+                    sb.AppendLine($"    " +
+                        $"<td width='{TileWidth}' height='{TileHeight}'  style='border: 1px solid green; margin-right: {TileWidth / 2}'>" +
+                        $"{tables[i][ic]}" +
+                        "</td>");
                 }
                 sb.AppendLine("</tr></table>");
-                //sb.Append($"<tr height='{TileHeight}'></tr>");
             }
             sb.AppendLine("</body>");
 
