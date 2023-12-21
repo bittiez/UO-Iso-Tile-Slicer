@@ -1,11 +1,13 @@
 ﻿using IronSoftware.Drawing;
+using System.Runtime.InteropServices.ComTypes;
+using System.Text;
 using Color = IronSoftware.Drawing.Color;
 
 namespace IsoTiloSlicer
 {
     internal class ImageHandler
     {
-        public ImageHandler(string imagePath = "", int tileWidth = 44, int tileHeight = 44, int offset = 1, string outputDirectory = "out") 
+        public ImageHandler(string imagePath = "", int tileWidth = 44, int tileHeight = 44, int offset = 1, string outputDirectory = "out")
         {
             ImagePath = imagePath;
             TileWidth = tileWidth;
@@ -30,18 +32,19 @@ namespace IsoTiloSlicer
 
         public bool Process()
         {
-            if(File.Exists(ImagePath))
+            if (File.Exists(ImagePath))
             {
                 OriginalImage = AnyBitmap.FromFile(ImagePath);
 
-                xSlices = (int)Math.Ceiling((double)OriginalImage.Width / (double)TileWidth) + 2;
-                ySlices = (int)Math.Ceiling((double)OriginalImage.Height / (double)TileHeight) + 2;
+                xSlices = (int)Math.Ceiling((double)OriginalImage.Width / (double)TileWidth) + 1;
+                ySlices = (int)Math.Ceiling((double)OriginalImage.Height / (double)TileHeight) + 1;
 
                 SplitImage();
                 SaveImages();
+                CreateHtmlLayout();
                 Console.WriteLine("Sliced succesfully.");
                 return true;
-            } 
+            }
             else
             {
                 LastErrorMessage = "Image path could not be found";
@@ -54,6 +57,11 @@ namespace IsoTiloSlicer
         {
             int xOffset = -(TileWidth / 2), yOffset = -(TileHeight / 2);
 
+            bool rOffset = false;
+
+            int widthProgress = 0; 
+            int heightProgress = 0;
+
             for (int row = 0; row < xSlices; row++)
             {
                 for (int col = 0; col < ySlices; col++)
@@ -62,6 +70,7 @@ namespace IsoTiloSlicer
                     int startY = (row * TileHeight) + yOffset;
 
                     AnyBitmap slice = new AnyBitmap(TileWidth, TileHeight, BackgroundColor);
+
 
                     int offset = Offset;
                     bool reverse = false;
@@ -75,8 +84,6 @@ namespace IsoTiloSlicer
 
                         for (int i = 0; i < grabQty; i++)
                         {
-                            //slice.SetPixel(grabX + i, yPixel, Color.White); Test to see shape
-
                             if (grabX + i + startX < 0 || grabX + i + startX >= OriginalImage.Width || yPixel + startY < 0 || yPixel + startY >= OriginalImage.Height)
                             {
                                 continue;
@@ -92,7 +99,7 @@ namespace IsoTiloSlicer
                                 offset--; //Keep offset the same for this run
                                 reverse = true;
                             }
-                        } 
+                        }
                         else
                         {
                             offset--;
@@ -100,7 +107,21 @@ namespace IsoTiloSlicer
                         //20, 4
                     }
                     Slices.Add(slice);
+
                 }
+
+                //if (!rOffset)
+                //{
+                //    xOffset = -(TileWidth / 2);
+                //    yOffset = -(TileHeight / 2);
+                //    rOffset = true;
+                //}
+                //else
+                //{
+                //    xOffset = (TileWidth / 2);
+                //    yOffset = (TileHeight / 2);
+                //    rOffset = false;
+                //}
             }
         }
 
@@ -116,6 +137,62 @@ namespace IsoTiloSlicer
 
                 image.SaveAs(Path.Combine(OutputDirectory, string.Format(FileNameFormat + ".bmp", startingNumber)), AnyBitmap.ImageFormat.Bmp);
                 startingNumber++;
+            }
+        }
+
+        public void CreateHtmlLayout()
+        {
+            StringBuilder sb = new StringBuilder();
+            int startingNumber = StartingFileNumber;
+
+            string[][] tables = new string[ySlices][];
+
+            for (int i = 0; i < ySlices; i++)
+            {
+                tables[i] = new string[xSlices];
+            }
+
+
+            int c = 0, r = 0;
+            foreach (var image in Slices)
+            {
+                string fname = string.Format(FileNameFormat + ".bmp", startingNumber);
+
+                tables[r][c] = $"<img src='{fname}' title='{fname}'>";
+                c++;
+
+                if (c >= xSlices)
+                {
+                    c = 0;
+                    r++;
+                }
+                startingNumber++;
+            }
+
+            sb.Append("<table>");
+
+
+            for (int i = 0; i < tables.Length; i++) //Rows
+            {
+                sb.Append("<tr>");
+                for (int ic = 0; ic < tables[i].Length; ic++) //Column
+                {
+                    sb.Append($"<td width='{TileWidth}' height='{TileHeight}'>{tables[i][ic]}</td>");
+                    //sb.Append($"<td width='{TileWidth}' height='{TileHeight}'></td>");
+                }
+                sb.Append("</tr>");
+                //sb.Append($"<tr height='{TileHeight}'></tr>");
+            }
+
+            sb.Append("</table>");
+
+            try
+            {
+                File.WriteAllText(Path.Combine(OutputDirectory, "layout.html"), sb.ToString());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
     }
