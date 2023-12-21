@@ -37,7 +37,7 @@ namespace IsoTiloSlicer
                 OriginalImage = AnyBitmap.FromFile(ImagePath);
 
                 xSlices = (int)Math.Ceiling((double)OriginalImage.Width / (double)TileWidth) + 1;
-                ySlices = (int)Math.Ceiling((double)OriginalImage.Height / (double)TileHeight) + 1;
+                ySlices = 2 * (int)Math.Ceiling((double)OriginalImage.Height / (double)TileHeight) + 1;
 
                 SplitImage();
                 SaveImages();
@@ -109,7 +109,7 @@ namespace IsoTiloSlicer
         private IronSoftware.Drawing.Point GetSectionStartPosition(int row, int column)
         {
             int x = column * TileWidth;
-            int y = (row * TileHeight) - (TileHeight / 2);
+            int y = (row * (TileHeight/2)) - (TileHeight / 2);
 
             if(row % 2 == 0) //Number is even
             {
@@ -176,7 +176,7 @@ namespace IsoTiloSlicer
 
                 for (int ic = 0; ic < tables[i].Length; ic++) //Column
                 {
-                    sb.AppendLine($"    <td width='{TileWidth}' height='{TileHeight}'>{tables[i][ic]}</td>");
+                    sb.AppendLine($"    <td width='{TileWidth}' height='{TileHeight}'  style='margin-right: {TileWidth / 2}'>{tables[i][ic]}</td>");
                     //sb.Append($"<td width='{TileWidth}' height='{TileHeight}'></td>");
                 }
                 sb.AppendLine("</tr></table>");
